@@ -1,0 +1,59 @@
+import os
+import subprocess
+from datetime import datetime
+from pyrogram import filters
+from AnonXMusic import app
+
+# Owner and allowed user IDs
+OWNER_ID = 2033411815
+ALLOWED_USERS = {OWNER_ID, 7392339658}
+
+# MongoDB connection details
+MONGO_URI = "mongodb+srv://fidixi3663:w7rvlxmDd5lsX9ix@cluster0.0k1an50.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"  # Change to your MongoDB URI
+DB_NAME = "fidixi3663"  # Replace with your database name
+
+def mongo_backup():
+    """Create a MongoDB backup using `mongodump`."""
+    try:
+        # Generate unique filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        backup_folder = f"backup_{DB_NAME}_{timestamp}"
+        
+        # Run the mongodump command
+        backup_command = f"mongodump --uri={MONGO_URI} --db={DB_NAME} --out={backup_folder}"
+        subprocess.run(backup_command, shell=True, check=True)
+        
+        # Create a compressed file for easy sharing
+        archive_file = f"{backup_folder}.zip"
+        compress_command = f"zip -r {archive_file} {backup_folder}"
+        subprocess.run(compress_command, shell=True, check=True)
+        
+        # Clean up the uncompressed folder
+        subprocess.run(f"rm -rf {backup_folder}", shell=True, check=True)
+        
+        return archive_file
+    except Exception as e:
+        print(f"Backup failed: {e}")
+        return None
+
+@app.on_message(filters.command("mongobackup") & filters.private)
+async def backup_handler(client, msg):
+    """Handle the `/mongobackup` command."""
+    user_id = msg.from_user.id
+    if user_id not in ALLOWED_USERS:
+        await msg.reply_text("You are not authorized to use this command.")
+        return
+
+    await msg.reply_text("Creating a backup, please wait...")
+    backup_file = mongo_backup()
+
+    if backup_file:
+        await msg.reply_text("Backup created successfully!")
+        # Send the backup file to the user
+        with open(backup_file, "rb") as file:
+            await msg.reply_document(file)
+        # Clean up the local backup file
+        os.remove(backup_file)
+    else:
+        await msg.reply_text("Backup failed. Please check the logs for more details.")
+      
