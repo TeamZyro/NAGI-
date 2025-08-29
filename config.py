@@ -126,6 +126,3 @@ if SUPPORT_CHAT:
             "[ERROR] - Your SUPPORT_CHAT url is wrong. Please ensure that it starts with https://"
         )
 
-# 🔥 Expose BASE_API vars for Youtube.py
-BASE_API_URL = config.BASE_API_URL
-BASE_API_KEY = config.BASE_API_KEY
