@@ -72,6 +72,10 @@ PLAYLIST_FETCH_LIMIT = int(getenv("PLAYLIST_FETCH_LIMIT", 50000))
 TG_AUDIO_FILESIZE_LIMIT = int(getenv("TG_AUDIO_FILESIZE_LIMIT", 104857600))  # 100MB
 TG_VIDEO_FILESIZE_LIMIT = int(getenv("TG_VIDEO_FILESIZE_LIMIT", 1073741824))  # 1GB
 
+    # ========================== APIs ========================== #
+BASE_API_URL = "https://zyro.zyronetworks.shop"
+BASE_API_KEY = "mTp6fyc98WzSd7EYK7edQMXPf8VZrfxk"
+
 # Get your pyrogram v2 sessions from @StringFatherBot on Telegram
 STRING1 = getenv("STRING_SESSION1", "BQFYNJ4ASWRikT3YXtoHKYMoI3o4WIWHh2py3x1QTGe3MWhW7-ghUxYNcZ_1Fe1dTFatCU_gW4xSibZQOB2SOKdHH5VnWs1oHeObeP_lHVkyuOV2qGotUdWM_dNNfJmRevAcsr5HHzM87Pislsto6o2YQuNjiRGbR2-J7uLsxPysDcEnp1m0RQwxIRQrsHggKXoAQ2Fl1jPAE9PWgov4Qnz6rjdQshWsfXL7cWF5Jjj240brDX4cCCeHrp-pUKH-XPWEIZS2lkxGqVkxkR2MqyKG-1V4fUXRcCBbu0-Ao5Wy-qp2_T4YdWq8TZLsjPWvcnHHUH-dzt5RXaiat2sgvA9REEiPfAAAAAHnX8XRAA")
 STRING2 = getenv("STRING_SESSION2", None)
@@ -121,3 +125,7 @@ if SUPPORT_CHAT:
         raise SystemExit(
             "[ERROR] - Your SUPPORT_CHAT url is wrong. Please ensure that it starts with https://"
         )
+
+# 🔥 Expose BASE_API vars for Youtube.py
+BASE_API_URL = config.BASE_API_URL
+BASE_API_KEY = config.BASE_API_KEY
