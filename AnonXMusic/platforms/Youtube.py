@@ -20,12 +20,13 @@ from concurrent.futures import ThreadPoolExecutor
 from youtubesearchpython.__future__ import VideosSearch, CustomSearch
 
 # Import your existing modules
-from AnonXMusic import LOGGER
-from AnonXMusic.utils.database import is_on_off
-from AnonXMusic.utils.formatters import time_to_seconds
+from Yumeko_Music import LOGGER
+from Yumeko_Music.utils.database import is_on_off
+from Yumeko_Music.utils.formatters import time_to_seconds
 
 BASE_API_URL = "http://zyro.zyronetworks.shop"
-BASE_API_KEY = "73Nmn7lDc5WWvKpA0V5U8ZhU7yxhWsbU"
+BASE_API_KEY = "JkBwVWTiMTdsflfi4MhDfIiBKu7MPg6F"
+
 
 DOWNLOAD_DIR = Path("downloads")
 DOWNLOAD_DIR.mkdir(exist_ok=True)
@@ -39,7 +40,7 @@ def cookie_txt_file():
     try:
         folder_path = f"{os.getcwd()}/cookies"
         filename = f"{os.getcwd()}/cookies/logs.csv"
-        
+
         # Try to get existing cookie files
         if os.path.exists(folder_path):
             txt_files = glob.glob(os.path.join(folder_path, '*.txt'))
@@ -48,7 +49,7 @@ def cookie_txt_file():
                 with open(filename, 'a') as file:
                     file.write(f'Chosen File : {cookie_txt_file}\n')
                 return f"""cookies/{str(cookie_txt_file).split("/")[-1]}"""
-        
+
         # If no cookie files, try to get from server
         return get_cookies_from_server()
     except Exception as e:
@@ -62,28 +63,28 @@ def get_cookies_from_server():
     try:
         if not BASE_API_KEY or not BASE_API_URL:
             return None
-            
+
         headers = {
             "x-api-key": BASE_API_KEY,
             "User-Agent": "Mozilla/5.0"
         }
-        
+
         response = requests.get(f"{BASE_API_URL}/cookies", headers=headers, timeout=30)
         if response.status_code == 200:
             data = response.json()
             if data.get("status") == "success":
                 COOKIE_NAME = data.get("cookie_name")
                 cookie_content = base64.b64decode(data["cookies"]).decode()
-                
+
                 # Save to temporary file
                 temp_cookie_file = os.path.join(DOWNLOAD_DIR, "temp_cookies.txt")
                 with open(temp_cookie_file, "w", encoding="utf-8") as f:
                     f.write(cookie_content)
-                
+
                 return temp_cookie_file
     except Exception as e:
         logger.error(f"Error getting cookies from server: {e}")
-    
+
     return None
 
 
@@ -98,26 +99,13 @@ def report_dead_cookie_to_server(cookie_file):
         url = f"{BASE_API_URL}/mark-dead-cookie"
         data = {"cookie_name": cookie_name}
         resp = requests.post(url, json=data, headers=headers, timeout=10)
-        
+
         if resp.status_code == 200:
             logger.info(f"✅ Reported dead cookie to server: {cookie_name}")
         else:
             logger.warning(f"⚠️ Failed to report dead cookie: {resp.text}")
     except Exception as e:
         logger.error(f"Error reporting dead cookie: {e}")
-
-
-def save_cookies_from_response(cookies_b64):
-    """Save cookies from API response"""
-    try:
-        cookie_content = base64.b64decode(cookies_b64).decode()
-        temp_cookie_file = os.path.join(DOWNLOAD_DIR, f"cookies_{int(time.time())}.txt")
-        with open(temp_cookie_file, "w", encoding="utf-8") as f:
-            f.write(cookie_content)
-        return temp_cookie_file
-    except Exception as e:
-        logger.error(f"Error saving cookies: {e}")
-        return None
 
 
 def delete_after_use(cookie_file):
@@ -131,7 +119,7 @@ async def check_file_size(link):
         cmd = ["yt-dlp", "-J", link]
         if cookie_file:
             cmd.extend(["--cookies", cookie_file])
-            
+
         proc = await asyncio.create_subprocess_exec(
             *cmd,
             stdout=asyncio.subprocess.PIPE,
@@ -153,12 +141,12 @@ async def check_file_size(link):
     info = await get_format_info(link)
     if info is None:
         return None
-    
+
     formats = info.get('formats', [])
     if not formats:
         print("No formats found.")
         return None
-    
+
     total_size = parse_size(formats)
     return total_size
 
@@ -175,9 +163,6 @@ async def shell_cmd(cmd):
         else:
             return errorz.decode("utf-8")
     return out.decode("utf-8")
-
-
-
 
 class YouTubeAPI:
     def __init__(self):
@@ -197,10 +182,10 @@ class YouTubeAPI:
         try:
             results = VideosSearch(link, limit=limit)
             search_results = (await results.next()).get("result", [])
-            
+
             if search_results:
                 return search_results[0]
-            
+
             search = CustomSearch(query=link, searchPreferences="EgIYAw==" ,limit=1)
             for res in (await search.next()).get("result", []):
                 return res
@@ -278,7 +263,7 @@ class YouTubeAPI:
             link = link.split("?si=")[0]
         elif "&si=" in link:
             link = link.split("&si=")[0]
-            
+
         result = await self._get_video_details(link)
         if not result:
             raise ValueError("Video unavailable")
@@ -349,12 +334,12 @@ class YouTubeAPI:
             link = link.split("?si=")[0]
         elif "&si=" in link:
             link = link.split("&si=")[0]
-            
+
         cookie_file = cookie_txt_file()
         cmd = f"yt-dlp -i --get-id --flat-playlist --playlist-end {limit} --skip-download {link}"
         if cookie_file:
             cmd += f" --cookies {cookie_file}"
-            
+
         playlist = await shell_cmd(cmd)
         try:
             result = playlist.split("\n")
@@ -397,12 +382,12 @@ class YouTubeAPI:
             link = link.split("?si=")[0]
         elif "&si=" in link:
             link = link.split("&si=")[0]
-            
+
         cookie_file = cookie_txt_file()
         ytdl_opts = {"quiet": True}
         if cookie_file:
             ytdl_opts["cookiefile"] = cookie_file
-            
+
         ydl = yt_dlp.YoutubeDL(ytdl_opts)
         with ydl:
             formats_available = []
@@ -466,24 +451,26 @@ class YouTubeAPI:
             LOGGER(__name__).error(f"Error in slider: {str(e)}")
             raise ValueError("Failed to fetch video details")
 
-
-
-    def independent_download_with_cookies(self, video_id, cookies_b64, is_video=False):
-        """Download independently using provided cookies"""
+    def independent_download_with_cookies(self, video_id, is_video=False):
+        """
+        Download independently using server-provided cookies (fetched via /cookies).
+        Note: Removed cookies_b64 handling; relies solely on get_cookies_from_server().
+        """
+        cookie_file = None
         try:
-            # Save cookies to temporary file
+             # Always fetch a fresh cookie file from server
             cookie_file = get_cookies_from_server()
             if not cookie_file:
                 return None
-            
+
             ext = ".mp4" if is_video else ".mp3"
             output_file = os.path.join(DOWNLOAD_DIR, f"{video_id}{ext}")
-            
+
             if os.path.exists(output_file):
                 return output_file
-            
+
             link = f"https://www.youtube.com/watch?v={video_id}"
-            
+
             if is_video:
                 ydl_opts = {
                     "format": "best[ext=mp4][height<=480]/best[ext=mp4]",
@@ -505,22 +492,22 @@ class YouTubeAPI:
                     "quiet": True,
                     "no_warnings": True,
                 }
-            
+
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 ydl.download([link])
-            
+
             # Clean up temporary cookie file
             if os.path.exists(cookie_file):
                 print("cookie deleting")
                 os.remove(cookie_file)
-            
+
             return output_file if os.path.exists(output_file) else None
-            
+
         except Exception as e:
             if cookie_file:
                 report_dead_cookie_to_server(cookie_file)
             # Clean up temporary cookie file
-            if os.path.exists(cookie_file):
+            if cookie_file and os.path.exists(cookie_file):
                 print("cookie deleting")
                 os.remove(cookie_file)
             logger.error(f"Independent download error: {e}")
@@ -528,7 +515,6 @@ class YouTubeAPI:
         finally:
             if cookie_file and os.path.exists(cookie_file):
                 os.remove(cookie_file)
-
 
     async def download(
         self,
@@ -544,17 +530,17 @@ class YouTubeAPI:
         if videoid:
             vid_id = link
             link = self.base + link
-        
+
         if video or songvideo:
             ext = ".mp4"
         else:
             ext = ".mp3"
-            
+
         file_path = DOWNLOAD_DIR / f"{vid_id if videoid else title}{ext}"
-        
+
         if file_path.exists():
             return str(file_path), True
-            
+
         loop = asyncio.get_running_loop()
 
         def create_session():
@@ -584,7 +570,7 @@ class YouTubeAPI:
                 if not BASE_API_KEY or not BASE_API_URL:
                     print("⚙️ API KEY or URL not set in config")
                     return None
-                    
+
                 headers = {
                     "x-api-key": f"{BASE_API_KEY}",
                     "User-Agent": "Mozilla/5"
@@ -592,14 +578,14 @@ class YouTubeAPI:
                 xyz = os.path.join("downloads", f"{vid_id}.mp3")
                 if os.path.exists(xyz):
                     return xyz
-                    
+
                 getAudio = requests.get(f"{BASE_API_URL}/audio/{vid_id}", headers=headers, timeout=120)
                 try:
                     songData = getAudio.json()
                 except Exception as e:
                     print(f"Invalid response from API: {str(e)}")
                     return None
-                    
+
                 status = songData.get('status')
                 if status == 'success':
                     songlink = songData['audio_url']
@@ -610,18 +596,16 @@ class YouTubeAPI:
                         future.result()
                     return xyz
                 elif status == 'downloading':
-                    # Server is downloading, use provided cookies for independent download
-                    cookies_b64 = songData.get('cookies')
-                    if cookies_b64:
-                        print(f"🔄 Server downloading {vid_id}, starting independent download with cookies...")
-                        result = self.independent_download_with_cookies(vid_id, cookies_b64, is_video=False)
-                        if result:
-                            return result
-                    
+                    # Server is downloading; start independent download using server-provided cookies
+                    print(f"🔄 Server downloading {vid_id}, starting independent download...")
+                    result = self.independent_download_with_cookies(vid_id, is_video=False)
+                    if result:
+                        return result
+
                     # Wait a bit and check again
                     print(f"⏳ Waiting for server download of {vid_id}...")
                     time.sleep(5)
-                    
+
                     # Check status again
                     status_response = requests.get(f"{BASE_API_URL}/status/{vid_id}", headers=headers, timeout=30)
                     if status_response.status_code == 200:
@@ -653,13 +637,13 @@ class YouTubeAPI:
             except Exception as e:
                 print(f"Error in downloading song: {str(e)}")
             return None
-        
+
         def video_dl(vid_id):
             try:
                 if not BASE_API_KEY or not BASE_API_URL:
                     print("⚙️ API KEY or URL not set in config")
                     return None
-                    
+
                 headers = {
                     "x-api-key": f"{BASE_API_KEY}",
                     "User-Agent": "Mozilla/5"
@@ -667,14 +651,14 @@ class YouTubeAPI:
                 xyz = os.path.join("downloads", f"{vid_id}.mp4")
                 if os.path.exists(xyz):
                     return xyz
-                    
+
                 getVideo = requests.get(f"{BASE_API_URL}/beta/{vid_id}", headers=headers, timeout=240)
                 try:
                     videoData = getVideo.json()
                 except Exception as e:
                     print(f"Invalid response from API: {str(e)}")
                     return None
-                    
+
                 status = videoData.get('status')
                 if status == 'success':
                     videolink = videoData['video_sd']
@@ -686,18 +670,16 @@ class YouTubeAPI:
                         future.result()  
                     return xyz
                 elif status == 'downloading':
-                    # Server is downloading, use provided cookies for independent download
-                    cookies_b64 = videoData.get('cookies')
-                    if cookies_b64:
-                        print(f"🔄 Server downloading {vid_id}, starting independent download with cookies...")
-                        result = self.independent_download_with_cookies(vid_id, cookies_b64, is_video=True)
-                        if result:
-                            return result
-                    
+                    # Server is downloading; start independent download using server-provided cookies
+                    print(f"🔄 Server downloading {vid_id}, starting independent download...")
+                    result = self.independent_download_with_cookies(vid_id, is_video=True)
+                    if result:
+                        return result
+
                     # Wait a bit and check again
                     print(f"⏳ Waiting for server download of {vid_id}...")
                     time.sleep(5)
-                    
+
                     # Check status again
                     status_response = requests.get(f"{BASE_API_URL}/status/{vid_id}", headers=headers, timeout=30)
                     if status_response.status_code == 200:
@@ -729,7 +711,7 @@ class YouTubeAPI:
             except Exception as e:
                 print(f"Error in downloading song: {str(e)}")
             return None
-        
+
         def song_video_dl():
             formats = f"{format_id}+140"
             fpath = f"downloads/{title}"
@@ -787,5 +769,5 @@ class YouTubeAPI:
         else:
             direct = True
             downloaded_file = await loop.run_in_executor(None, lambda:audio_dl(vid_id))
-        
+
         return downloaded_file, direct
