@@ -20,9 +20,9 @@ from concurrent.futures import ThreadPoolExecutor
 from youtubesearchpython.__future__ import VideosSearch, CustomSearch
 
 # Import your existing modules
-from Yumeko_Music import LOGGER
-from Yumeko_Music.utils.database import is_on_off
-from Yumeko_Music.utils.formatters import time_to_seconds
+from AnonXMusic import LOGGER
+from AnonXMusic.utils.database import is_on_off
+from AnonXMusic.utils.formatters import time_to_seconds
 
 BASE_API_URL = "http://zyro.zyronetworks.shop"
 BASE_API_KEY = "JkBwVWTiMTdsflfi4MhDfIiBKu7MPg6F"
