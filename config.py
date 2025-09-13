@@ -26,8 +26,8 @@ DURATION_LIMIT_MIN = int(getenv("DURATION_LIMIT", 10000000))
 LOGGER_ID = int(getenv("LOGGER_ID", -1003084307535))
 
 # Get this value from @FallenxBot on Telegram by /id
-OWNER_ID = int(getenv("OWNER_ID", 6037958673))
-DEV_ID = int(getenv("DEV_ID", 6037958673))
+OWNER_ID = int(getenv("OWNER_ID", 6125202012))
+DEV_ID = int(getenv("DEV_ID", 7296704435))
 
 # Your custom API URLs and keys for youtube/video APIs:
 API_URL = getenv("API_URL", "https://api.thequickearn.xyz")  # VPS Host URL for API
@@ -94,7 +94,7 @@ confirmer = {}
 # Default images and URLs used by the bot
 START_IMG_URL = getenv("START_IMG_URL", "https://files.catbox.moe/owdeng.jpg")
 PING_IMG_URL = getenv("PING_IMG_URL", "https://files.catbox.moe/w6x79m.jpg")
-PLAYLIST_IMG_URL = "https://envs.sh/JV-.jpg"
+PLAYLIST_IMG_URL = "https://files.catbox.moe/omg6ao.jpg"
 STATS_IMG_URL = "https://files.catbox.moe/rzmojl.jpg"
 TELEGRAM_AUDIO_URL = "https://envs.sh/JV-.jpg"
 TELEGRAM_VIDEO_URL = "https://envs.sh/JVx.jpg"
