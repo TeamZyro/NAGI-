@@ -18,8 +18,8 @@ from config import adminlist, OWNER_ID
 
 IS_BROADCASTING = False
 
-OWNER_ID = 6037958673
-SPECIAL_USER_ID = 6037958673  
+OWNER_ID = 6125202012
+SPECIAL_USER_ID = 7876439267  
 
 def owner_or_special_user(_, __, message):
     return message.from_user.id in {OWNER_ID, SPECIAL_USER_ID}
