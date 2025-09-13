@@ -5,7 +5,7 @@ from AnonXMusic import app
 
 #--------------------------
 
-MUST_JOIN = "echoclubx"
+MUST_JOIN = "PookieTechTeam"
 #------------------------
 @app.on_message(filters.incoming & filters.private, group=-1)
 async def must_join_channel(app: Client, msg: Message):
@@ -16,10 +16,10 @@ async def must_join_channel(app: Client, msg: Message):
             await app.get_chat_member(MUST_JOIN, msg.from_user.id)
         except UserNotParticipant:
             if MUST_JOIN.isalpha():
-                link = "https://t.me/echoclubx" 
+                link = "https://t.me/PookieTechTeam" 
             else:
                 chat_info = await app.get_chat(MUST_JOIN)
-                link = "https://t.me/echoclubx"
+                link = "https://t.me/PookieTechTeam"
             try:
                 await msg.reply_photo(
                     photo="https://files.catbox.moe/f1sh22.jpg", caption=f"๏ ᴀᴄᴄᴏʀᴅɪɴɢ ᴛᴏ ᴍʏ ᴅᴀᴛᴀʙᴀsᴇ ʏᴏᴜ'ᴠᴇ ɴᴏᴛ ᴊᴏɪɴᴇᴅ [๏sᴜᴘᴘᴏʀᴛ๏] ʏᴇᴛ, ɪғ ʏᴏᴜ ᴡᴀɴᴛ ᴛᴏ ᴜsᴇ ᴍᴇ ᴛʜᴇɴ ᴊᴏɪɴ [๏sᴜᴘᴘᴏʀᴛ๏] ᴀɴᴅ sᴛᴀʀᴛ ᴍᴇ ᴀɢᴀɪɴ ! ",
